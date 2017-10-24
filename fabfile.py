@@ -41,3 +41,4 @@ from upgrade.helpers.tools import (
 from upgrade_tests.helpers.existence import (
     set_datastore
 )
+from upgrade.helpers.tasks import workaround

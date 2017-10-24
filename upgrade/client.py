@@ -176,6 +176,9 @@ def satellite6_client_upgrade(os_version, clients):
             logger.highlight(
                 'The katello-agent on client {0} upgraded '
                 'to version {1}'.format(hostname, version))
+    logger.info('Get Puppet content info')
+    run("sudo -u postgres psql foreman -c  \"select value from settings where "
+        "name = 'default_location_puppet_content';\"")
 
 
 def user_clients_upgrade(old_repo, clients):

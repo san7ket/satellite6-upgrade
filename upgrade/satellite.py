@@ -2,6 +2,7 @@ import os
 import sys
 
 from upgrade_tests.helpers.existence import set_datastore
+from upgrade.helpers.tasks import workaround
 from upgrade.helpers.tools import (
     host_pings,
     host_ssh_availability_check,
@@ -86,6 +87,7 @@ def satellite6_upgrade():
         e.g '6.1','6.2', '6.3'
     """
     logger.highlight('\n========== SATELLITE UPGRADE =================\n')
+
     to_version = os.environ.get('TO_VERSION')
     base_url = os.environ.get('BASE_URL')
     if to_version not in ['6.1', '6.2', '6.3']:
@@ -155,9 +157,15 @@ def satellite6_upgrade():
     # Enable ostree feature only for rhel7 and sat6.2
     if to_version == '6.2' and major_ver == 7:
         enable_ostree(sat_version='6.2')
+    logger.info('Get Puppet content info')
+    run("sudo -u postgres psql foreman -c  \"select value from settings where "
+        "name = 'default_location_puppet_content';\"")
     if os.environ.get('RUN_EXISTANCE_TESTS', 'false').lower() == 'true':
         logger.info('Setting up postupgrade datastore for existance tests..')
         set_datastore('postupgrade')
+    logger.info('Get Puppet content info')
+    run("sudo -u postgres psql foreman -c  \"select value from settings where "
+        "name = 'default_location_puppet_content';\"")
 
 
 def satellite6_zstream_upgrade():

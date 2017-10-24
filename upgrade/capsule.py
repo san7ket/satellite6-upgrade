@@ -12,7 +12,8 @@ from upgrade.helpers.rhevm import (
     create_rhevm_instance, delete_rhevm_instance
 )
 from upgrade.helpers.tasks import (
-    sync_capsule_repos_to_upgrade
+    sync_capsule_repos_to_upgrade,
+    workaround
 )
 from upgrade.helpers.tools import (
     copy_ssh_key,
@@ -177,6 +178,7 @@ def satellite6_capsule_upgrade(cap_host, sat_host):
     reboot(160)
     # Check if Capsule upgrade is success
     run('katello-service status', warn_only=True)
+    execute(workaround, host=sat_host)
 
 
 def satellite6_capsule_zstream_upgrade():

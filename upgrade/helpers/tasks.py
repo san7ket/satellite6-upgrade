@@ -355,3 +355,8 @@ def check_ntpd():
     if ntpd_check.return_code > 0:
         run("service ntpd start")
         run("chkconfig ntpd on")
+
+def workaround():
+    """Check the status of the puppet from database"""
+    logger.info('Get Puppet content info')
+    run("sudo -u postgres psql foreman -c  \"select value from settings where name = 'default_location_puppet_content';\"")
