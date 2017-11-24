@@ -28,6 +28,7 @@ from upgrade.helpers.rhevm import (
 from upgrade.helpers.tasks import (
     sync_capsule_repos_to_upgrade,
     sync_tools_repos_to_upgrade,
+    post_upgrade_test_tasks
 )
 from upgrade.helpers.tools import (
     copy_ssh_key,

@@ -303,42 +303,42 @@ def post_upgrade_test_tasks(sat_host, cap_host=None):
     :param list cap_host: Capsule hosts to run sync on
     """
     # Execute tasks as post upgrade tests are dependent
-    certificate_url = os.environ.get('FAKE_MANIFEST_CERT_URL')
-    if certificate_url is not None:
-        execute(
-            setup_fake_manifest_certificate,
-            certificate_url,
-            host=sat_host
-        )
+    # certificate_url = os.environ.get('FAKE_MANIFEST_CERT_URL')
+    # if certificate_url is not None:
+    #     execute(
+    #         setup_fake_manifest_certificate,
+    #         certificate_url,
+    #         host=sat_host
+    #     )
     sat_version = os.environ.get('TO_VERSION')
-    execute(setup_alternate_capsule_ports, host=sat_host)
-    if sat_version not in ['6.0', '6.1']:
-        # Update the Default Organization name, which was updated in 6.2
-        logger.info("Update the Default Organization name, which was updated "
-                    "in 6.2")
-        execute(hammer, 'organization update --name "Default_Organization" '
-                '--new-name "Default Organization" ',
-                host=sat_host)
-        # Update the Default Location name, which was updated in 6.2
-        logger.info("Update the Default Location name, which was updated in "
-                    "6.2")
-        execute(hammer, 'location update --name "Default_Location" '
-                        '--new-name "Default Location" ',
-                host=sat_host)
-        if bz_bug_is_open(1502505):
-            logger.info(
-                "Update the default_location_puppet_content value with "
-                "updated location name.Refer BZ:1502505")
-            execute(hammer, 'settings set --name '
-                            '"default_location_puppet_content" --value '
-                            '"Default Location"', host=sat_host)
-    # Increase log level to DEBUG, to get better logs in foreman_debug
-    execute(lambda: run('sed -i -e \'/:level: / s/: .*/: '
-                        'debug/\' /etc/foreman/settings.yaml'), host=sat_host)
-    execute(lambda: run('katello-service restart'), host=sat_host)
-    # Execute capsule sync task , after the upgrade is completed
-    if cap_host:
-        execute(capsule_sync, cap_host, host=sat_host)
+    # execute(setup_alternate_capsule_ports, host=sat_host)
+    # if sat_version not in ['6.0', '6.1']:
+    #     # Update the Default Organization name, which was updated in 6.2
+    #     logger.info("Update the Default Organization name, which was updated "
+    #                 "in 6.2")
+    #     execute(hammer, 'organization update --name "Default_Organization" '
+    #             '--new-name "Default Organization" ',
+    #             host=sat_host)
+    #     # Update the Default Location name, which was updated in 6.2
+    #     logger.info("Update the Default Location name, which was updated in "
+    #                 "6.2")
+    #     execute(hammer, 'location update --name "Default_Location" '
+    #                     '--new-name "Default Location" ',
+    #             host=sat_host)
+    #     if bz_bug_is_open(1502505):
+    #         logger.info(
+    #             "Update the default_location_puppet_content value with "
+    #             "updated location name.Refer BZ:1502505")
+    #         execute(hammer, 'settings set --name '
+    #                         '"default_location_puppet_content" --value '
+    #                         '"Default Location"', host=sat_host)
+    # # Increase log level to DEBUG, to get better logs in foreman_debug
+    # execute(lambda: run('sed -i -e \'/:level: / s/: .*/: '
+    #                     'debug/\' /etc/foreman/settings.yaml'), host=sat_host)
+    # execute(lambda: run('katello-service restart'), host=sat_host)
+    # # Execute capsule sync task , after the upgrade is completed
+    # if cap_host:
+    #     execute(capsule_sync, cap_host, host=sat_host)
     # Execute task for template changes required for discovery feature
     execute(
         setup_foreman_discovery,
