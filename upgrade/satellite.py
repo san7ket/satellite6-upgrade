@@ -104,19 +104,26 @@ def satellite6_upgrade():
     enable_repos('rhel-server-rhscl-{0}-rpms'.format(major_ver))
     # If CDN upgrade then enable satellite latest version repo
     if base_url is None:
-        enable_repos('rhel-{0}-server-satellite-{1}-rpms'.format(
-            major_ver, to_version))
+        # enable_repos('rhel-{0}-server-satellite-{1}-rpms'.format(
+        #     major_ver, to_version))
+        # For BETA
+        enable_repos('rhel-server-7-satellite-6-beta-rpms')
         # Remove old custom sat repo
         for fname in os.listdir('/etc/yum.repos.d/'):
             if 'sat' in fname.lower():
                 os.remove('/etc/yum.repos.d/{}'.format(fname))
     # Else, consider this as Downstream upgrade
     else:
+        enable_repos('rhel-server-7-satellite-6-beta-rpms')
+        # Remove old custom sat repo
+        for fname in os.listdir('/etc/yum.repos.d/'):
+            if 'sat' in fname.lower():
+                os.remove('/etc/yum.repos.d/{}'.format(fname))
         # Add Sat6 repo from latest compose
         satellite_repo = StringIO()
         satellite_repo.write('[sat6]\n')
         satellite_repo.write('name=satellite 6\n')
-        satellite_repo.write('baseurl={0}\n'.format(base_url))
+        satellite_repo.write('baseurl=http://qe-capsule-feature-rhel6.capqe.lab.eng.rdu2.redhat.com/pub/beta/\n')
         satellite_repo.write('enabled=1\n')
         satellite_repo.write('gpgcheck=0\n')
         put(local_path=satellite_repo,

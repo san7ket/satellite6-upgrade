@@ -325,13 +325,12 @@ def post_upgrade_test_tasks(sat_host, cap_host=None):
         execute(hammer, 'location update --name "Default_Location" '
                         '--new-name "Default Location" ',
                 host=sat_host)
-        if bz_bug_is_open(1502505):
-            logger.info(
-                "Update the default_location_puppet_content value with "
-                "updated location name.Refer BZ:1502505")
-            execute(hammer, 'settings set --name '
-                            '"default_location_puppet_content" --value '
-                            '"Default Location"', host=sat_host)
+        logger.info(
+            "Update the default_location_puppet_content value with "
+            "updated location name.Refer BZ:1502505")
+        execute(hammer, 'settings set --name '
+                        '"default_location_puppet_content" --value '
+                        '"Default Location"', host=sat_host)
     # Increase log level to DEBUG, to get better logs in foreman_debug
     execute(lambda: run('sed -i -e \'/:level: / s/: .*/: '
                         'debug/\' /etc/foreman/settings.yaml'), host=sat_host)

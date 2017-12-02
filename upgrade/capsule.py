@@ -3,7 +3,6 @@ import sys
 
 from automation_tools import setup_capsule_firewall
 from automation_tools.repository import enable_repos
-from automation_tools.satellite6.capsule import generate_capsule_certs
 from automation_tools.utils import distro_info, update_packages
 from datetime import datetime
 from fabric.api import env, execute, run
@@ -179,6 +178,33 @@ def satellite6_capsule_upgrade(cap_host, sat_host):
     # Check if Capsule upgrade is success
     run('katello-service status', warn_only=True)
 
+
+def generate_capsule_certs(capsule_hostname, force=False):
+    """Generate certificates for a capsule.
+    Run ``capsule-certs-generate --capsule-fqdn <capsule_hostname> --certs-tar
+    "<capsule_hostname>-certs.tar"`` in order to generate them.
+    The resulting tarbal will be store on the working directory of the remote
+    host.
+    :param str capsule_hostname: The fully qualified domain name for the
+        capsule.
+    :param bool force: Force creation of the capsule cert even if it is
+        already created.
+    """
+    # Absolute path bug
+    cert_path = '~/{0}-certs.tar'.format(capsule_hostname)
+    result = run('[ -f {0} ]'.format(cert_path), quiet=True)
+    if result.failed or force:
+        if os.environ.get('SATELLITE_VERSION') == '6.3':
+            run('capsule-certs-generate -v --foreman-proxy-fqdn {0} '
+                '--certs-tar {1} --certs-update-all'.format(capsule_hostname,
+                                                            cert_path
+                                                            ))
+        else:
+            run('capsule-certs-generate -v --capsule-fqdn {0} '
+                '--certs-tar {1}'.format(capsule_hostname,
+                                         cert_path
+                                         ))
+    return cert_path
 
 def satellite6_capsule_zstream_upgrade(cap_host):
     """Upgrades Capsule to its latest zStream version
